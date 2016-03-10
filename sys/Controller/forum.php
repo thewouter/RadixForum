@@ -52,15 +52,18 @@ class forum {
         if ($id) {
 
             $tid = (int) $id;
-            $qry = 'SELECT t.topic_id,t.title, t.cat_id, t.uid,t.topic_status, c.cat_name, p.imessage '
+            $qry = 'SELECT t.topic_id,t.title, t.cat_id, t.uid,t.topic_status, c.cat_name, p.imessage, t.opkomst '
                     . 'FROM ' . PREFIX . 'codo_topics AS t '
                     . 'INNER JOIN ' . PREFIX . 'codo_categories AS c ON c.cat_id=t.cat_id '
                     . 'INNER JOIN ' . PREFIX . 'codo_posts AS p ON p.topic_id=t.topic_id '
                     . 'WHERE t.topic_id=' . $tid;
             $res = $this->db->query($qry);
-
+			
+            
             $topic_info = $res->fetch();
             //i have come to edit the topic
+            
+            var_dump($topic_info);
 
             $tuid = $topic_info['uid'];
             $cid = $topic_info['cat_id'];
@@ -74,7 +77,8 @@ class forum {
                 "imessage" => "",
                 "topic_status" => 0,
                 "cat_id" => 0,
-                "topic_id" => 0
+                "topic_id" => 0,
+            	"opkomst" => 0
             );
 
             //i have come to create a new topic

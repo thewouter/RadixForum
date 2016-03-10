@@ -106,9 +106,9 @@
                                     <div class="codo_move_sep">
                                     </div>
                                     
-                                    
+                                    <br>
                                     <div class="input-group date" data-provide="datepicker">
-									    <input type="text" class="form-control" id="opkomst" required='true'>
+									    <input type="text" class="form-control" id='opkomst' required='true'>
 									    <div class="input-group-addon">
 									        <span class="glyphicon glyphicon-th"></span>
 									    </div>
@@ -226,7 +226,9 @@
                 CODOF.editor_form = $('#codo_new_reply_post');
                 CODOF.editor_preview_btn = $('#codo_post_preview_btn');
                 CODOF.editor_reply_post_btn = $('#codo_new_reply_action_post');
-
+				
+				datePicker = $('#opkomst');
+						
                 $('#codo_new_reply_textarea').putCursorAtEnd();
                 $('#codo_category_select li  a').on('click', function () {
                     var cid = $(this).attr('id');
@@ -235,7 +237,6 @@
                     $('#dropdownMenu1').val(cid);
                     $('#codo_topic_cat_alias').val($(this).data('alias'));
 
-                    //return false;
                     CODOFVAR.cid = cid;
                     CODOF.mentions.updateSpec(cid);
                     CODOF.mentions.checkForNonMentions();
@@ -354,7 +355,9 @@
                         CODOF.edit_topic_id = parseInt('{$topic.topic_id}');
                         CODOF.selectCat(cat_id);
                         CODOF.oldCatName = $('#codo_category_select > button > span:first-child').text();
-
+                        datePicker.val('{$topic.opkomst}');
+						
+						
                         $('#codo_move_text').html(
                                 $('#codo_move_text').text()
                                 .replace('%fromCategoryName%', '<span id="codo_move_from_category_name"></span>')
@@ -432,6 +435,7 @@
                             tid: CODOF.edit_topic_id,
                             notify: $('#move_notify').prop('checked'),
                             reason: $('#move_notify').val(),
+                            opkomst: $('#opkomst').val(),
                             tags: $('#codo_tags').tagsinput('items'),
                             sticky: $('input[name=sticky]').is(":checked"),
                             frontpage: $('input[name=frontpage]').is(":checked")
