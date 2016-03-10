@@ -26,7 +26,7 @@
 	            array_multisort($date, SORT_NATURAL, $topics);
 
 	            foreach ( $topics as $key => $row){
-	            	echo '<a id="codo_topic_link_1" href="http://radix/index.php?u=/topic/'.$row['topic_id'].'/'.$row['title'].'"><b>'.$row['title'].' ('.$row['opkomst'].')</b></a>';
+	            	echo '<a id="codo_topic_link_1" href="/index.php?u=/topic/'.$row['topic_id'].'"><b>'.$row['title'].' ('.$row['opkomst'].')</b></a>';
 	            	echo '<br>';
 	            }
 	            
