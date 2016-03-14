@@ -345,8 +345,7 @@
                 $('#poll_options').hide();
                 $('#extra_option').hide();
                 
-                {if $poll.2 != 0}
-                
+                {if $poll.1 != 0}
 	                $('#codo_poll_title').val('{$poll.1}');
                     $('#poll_on').prop('checked', true);
                     $('#poll_options').show();
