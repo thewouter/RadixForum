@@ -325,6 +325,20 @@ class topic {
 
                 $notifier->queueNotify('new_topic', $topicData);
                 //$notifier->dequeueNotify();
+
+	            if (isset($_POST['poll'])) {
+	            	if ($_POST['poll'] == true){
+	            		$query = "INSERT INTO codo_poll (question, topic_id) VALUES ('".$_POST['question']."','".(string)$tid."')";
+	            		$this->db->query($query);
+	            		$pollID = $this->db->lastInsertId();
+	            		$pollOptions=json_decode($_POST['options']);
+	            		foreach ($pollOptions as $option){
+	            			$query = "INSERT INTO codo_poll_options (poll_id, text) VALUES ('".(string)$pollID."','".$option[0]."')";
+	            			$this->db->query($query);
+	            		}
+	            	}
+	            }
+                
                 \CODOF\Hook::call('after_topic_insert', $topicData);
             }
 
@@ -335,6 +349,8 @@ class topic {
                 //the method does the filtering
                 $topic->insertTags($tid, $_POST['tags']);
             }
+            
+            
 
             echo json_encode(array('tid' => $tid));
         }
@@ -439,6 +455,40 @@ class topic {
 
                 $topic->edit_topic($cid, $tid, $topic_info['post_id'], $_POST['title'], $_POST['imesg'], $_POST['omesg'], $new_topic_status);
             }
+
+            
+            
+            $qrr = $this->db->query("SELECT poll_id FROM codo_poll WHERE topic_id='".$tid."'");
+            $poll_id = $qrr->fetch();
+            
+            if (isset($_POST['poll'])) {
+            	if ($_POST['poll'] == true){
+            		$pollOptions=json_decode($_POST['options']);
+            		if (empty($poll_id)==TRUE){ // new Poll
+	            		$query = "INSERT INTO codo_poll (question, topic_id) VALUES ('".$_POST['question']."','".(string)$tid."')";
+	            		$this->db->query($query);
+	            		$pollID = $this->db->lastInsertId();
+	            		foreach ($pollOptions as $option){
+	            			$query = "INSERT INTO codo_poll_options (poll_id, text) VALUES ('".(string)$pollID."','".$option[0]."')";
+	            			$this->db->query($query);
+	            		}
+            		} else {
+	            		foreach ($pollOptions as $option){
+	            			if ($option[1] == -1){
+	            				//New Option
+	            				var_dump("new Option");
+	            				$query = "INSERT INTO codo_poll_options ( poll_id, text) VALUES ('".$poll_id."','".$option[0]."')";
+	            				$this->db->query($query);
+	            			} else {
+	            				// Edit option
+	            				$query = "UPDATE codo_poll_options SET text='".$option[0]."' WHERE poll_option_id='".$option[1]."'";
+	            				$this->db->query($query);
+	            			}
+	            		}
+            		}
+            	}
+            }
+            
 
             if (isset($_POST['tags']) && $user->can('add tags')) {
 

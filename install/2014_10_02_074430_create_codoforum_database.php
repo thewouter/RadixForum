@@ -15,7 +15,7 @@ class codoforumInstallDatabase {
             'codo_user_preferences', 'codo_users', 'codo_views',
             'b8_wordlist', 'codo_pages', 'codo_page_roles',
             'codo_edits', 'codo_reputation', 'codo_daily_rep_log',
-            'codo_promotion_rules');
+            'codo_promotion_rules', 'codo_poll', 'codo_poll_options');
 
         foreach ($tablesToDrop as $table) {
 
@@ -362,7 +362,8 @@ class codoforumInstallDatabase {
             $table->integer('no_posts')->default("0");
             $table->integer('no_views')->default("0");
             $table->integer('topic_status')->default("1");
-            $table->integer('redirect_to')->nullable();            
+            $table->integer('redirect_to')->nullable(); 
+            $table->date('opkomst')->default("0000-00-00");           
             $table->index('last_post_time');
             $table->index(array('cat_id', 'uid', 'topic_created'));
         });
@@ -376,6 +377,27 @@ class codoforumInstallDatabase {
             $table->integer('uid');
             $table->integer('read_time');
             $table->primary(array('cat_id', 'uid'));
+        });
+
+
+        /**
+         * Table: codo_poll
+         */
+        Schema::create('codo_poll', function($table) {
+            $table->increments('poll_id');
+            $table->string('question');
+            $table->integer('topic_id');
+        });
+
+
+        /**
+         * Table: codo_poll_options
+         */
+        Schema::create('codo_poll_options', function($table) {
+            $table->increments('poll_option_id');
+            $table->integer('poll_id');
+            $table->string('text');
+            $table->integer('votes')->default("0");
         });
 
         /**

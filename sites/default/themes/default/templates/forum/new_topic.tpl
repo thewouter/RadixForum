@@ -159,7 +159,32 @@
 
                                 <div id="codo_non_mentionable" class="codo_non_mentionable"><b>{_t("WARNING:")} </b>{_t("You mentioned %MENTIONS%, but they cannot see this message and will not be notified")} 
                                 </div>
-
+                                
+                                
+                                
+                                <div id="poll">
+                                	<div id="poll_name">
+		                                <input type="checkbox" name="poll_on" id="poll_on"> 
+		                                <input type="hidden" name="poll_id" id="poll_id">
+		                                <label>Voeg Poll toe</label>
+		                            </div>
+		                            <div id="extra_option" class="codo_tooltip form-group codo_sticky">
+		                            	<input type="button" onclick="add_option()" class="codo_btn" id="new_option_button" value="Extra option">
+		                            </div>
+	                                <div id="poll_options">
+	                                	<label for="title">{_t("Title")}</label>
+			                            <div>
+			                                <input id="codo_poll_title" type="text" class="codo_input" value="" placeholder="{'Give a title for your poll'}">
+			                            </div>
+			                            <div id="poll_choises">
+			                            	<br>
+			                            </div>
+	                                </div>
+								</div>	
+								
+								
+								
+								<br>
                                 <div class="codo_new_reply_action">
 
                                     <button class="codo_btn" id="codo_new_reply_action_post"><i class="icon-check"></i><span class="codo_action_button_txt">{_t("Post")}</span></button>
@@ -175,6 +200,7 @@
                                 <input type="text" class="end-of-line" name="end_of_line" />
 
                             </div>
+                            
 
                             <input type="text" class="end-of-line" id="end_of_line" name="end_of_line" />
                             <input id="codo_topic_cat" name="codo_topic_cat" type="hidden" />
@@ -192,7 +218,9 @@
             {include file='forum/editor.tpl'}
         </div>
         <script type="text/javascript">
-
+			
+			var pollCount = 1;
+			
             CODOFVAR = {
                 smileys: JSON.parse('{$forum_smileys}'),
                 reply_min_chars: parseInt({$reply_min_chars}),
@@ -210,9 +238,34 @@
                 }
 
             };
+            
+            function add_option(){
+            	var label = document.createElement("label");
+				label.for = "title";
+            	
+            	var newContent = document.createTextNode("Option "  + pollCount.toString());
+            	label.appendChild(newContent);
+            	
+				var option = document.createElement("input");
+				option.type = "text";
+				option.id = "option_name_"+pollCount.toString();
+				option.className = "codo_input";
+				
+				var hidden = document.createElement("input");
+				hidden.type = "hidden";
+				hidden.id = "option_id_"+pollCount.toString();
+				hidden.value = "-1";
+				
+				var cont = document.getElementById("poll_choises")
+				cont.appendChild(label);
+				cont.appendChild(option);
+				cont.appendChild(hidden);
+				
+				pollCount = pollCount + 1;
+            }
 
             function on_codo_loaded() {
-
+				
                 CODOF.inTopic = true;
 
 
@@ -228,6 +281,7 @@
                 CODOF.editor_reply_post_btn = $('#codo_new_reply_action_post');
 				
 				datePicker = $('#opkomst');
+				pollID = $('#poll_id');
 						
                 $('#codo_new_reply_textarea').putCursorAtEnd();
                 $('#codo_category_select li  a').on('click', function () {
@@ -287,6 +341,27 @@
 
                 }
                 ;
+                
+                $('#poll_options').hide();
+                $('#extra_option').hide();
+                
+                {if $poll.2 != 0}
+                
+	                $('#codo_poll_title').val('{$poll.1}');
+                    $('#poll_on').prop('checked', true);
+                    $('#poll_options').show();
+                    $('#extra_option').show();
+                    {assign var=in value=1}
+	                {foreach from=$poll.3 item=option} 
+	                	add_option();
+	                	$('#option_id_{$in}').val('{$option.1}');
+	                	$('#option_name_{$in}').val('{$option.0}');
+	                	{$in = $in+1}
+	                {/foreach}
+                {/if}
+                
+                datePicker.val('{$topic.opkomst}');
+                pollID.val('{$poll.0}');
 
 
                 CODOF.mentions.extractAndAddToManned($("#codo_new_reply_textarea").val());
@@ -355,7 +430,9 @@
                         CODOF.edit_topic_id = parseInt('{$topic.topic_id}');
                         CODOF.selectCat(cat_id);
                         CODOF.oldCatName = $('#codo_category_select > button > span:first-child').text();
-                        datePicker.val('{$topic.opkomst}');
+                       
+                        
+                        
 						
 						
                         $('#codo_move_text').html(
@@ -382,6 +459,20 @@
                         $('#show_frontpage').show();
                     } else {
                         $('#show_frontpage').hide();
+
+                    }
+                });
+                
+                $('input[name=poll_on]').on('change', function () {
+
+
+                    if ($(this).is(':checked')) {
+
+                        $('#poll_options').show();
+                        $('#extra_option').show();
+                    } else {
+                        $('#poll_options').hide();
+                        $('#extra_option').hide();
 
                     }
                 });
@@ -422,8 +513,16 @@
                             var href = $(this).attr('href');
                             $(this).html(href);
                         });
-
-
+						
+						
+						var options = Array();
+						for(i = 1; i < pollCount; i++) {
+							var text = $('#option_name_' + i.toString()).val();
+							var id = $('#option_id_' + i.toString()).val();
+							options.push([text, id]);
+							
+						}
+						
                         var title = $.trim($('#codo_topic_title').val());
                         CODOF.req.data = {
                             title: title,
@@ -438,7 +537,11 @@
                             opkomst: $('#opkomst').val(),
                             tags: $('#codo_tags').tagsinput('items'),
                             sticky: $('input[name=sticky]').is(":checked"),
-                            frontpage: $('input[name=frontpage]').is(":checked")
+                            frontpage: $('input[name=frontpage]').is(":checked"),
+                            poll: $('input[name=poll_on]').is(":checked"),
+                            options: JSON.stringify(options),
+                            question: $('#codo_poll_title').val(),
+                            poll_id: $('#input[name=poll_id]').val()
                         };
 
                         CODOF.hook.call('before_req_send');

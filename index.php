@@ -19,4 +19,6 @@ define('IN_CODOF', true);
 require 'sys/load.php';
 ini_set('display_errors', 1);
 //everything related to routing
+
+
 require 'routes.php';

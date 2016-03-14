@@ -58,13 +58,27 @@ class forum {
                     . 'INNER JOIN ' . PREFIX . 'codo_posts AS p ON p.topic_id=t.topic_id '
                     . 'WHERE t.topic_id=' . $tid;
             $res = $this->db->query($qry);
-			
-            
             $topic_info = $res->fetch();
             //i have come to edit the topic
+            $qry2 = "SELECT poll_id, question FROM ".PREFIX."codo_poll WHERE topic_id=".$tid."";
+            $res2 = $this->db->query($qry2);
+            $poll_info = $res2->fetch();
+            $poll_id = $poll_info['poll_id'];
+            $poll_name = $poll_info['question'];
             
-            var_dump($topic_info);
-
+			$qry3 = "SELECT s.poll_option_id AS pollid FROM ".PREFIX."codo_poll_options s WHERE s.poll_id=".$poll_id;
+			$qry3 = "SELECT * FROM ".PREFIX."codo_poll_options";
+			$res3 = $this->db->query($qry3);
+			
+			$options = array($poll_id);
+			$temp = array();
+			while($option = $res3->fetch()){
+				array_push($temp, array($option['text'], $option['poll_option_id']));
+			}
+			array_push($options, $poll_name);
+			array_push($options, sizeof($temp));
+			array_push($options, $temp);
+            
             $tuid = $topic_info['uid'];
             $cid = $topic_info['cat_id'];
 
@@ -80,6 +94,8 @@ class forum {
                 "topic_id" => 0,
             	"opkomst" => 0
             );
+            
+            $options=array(0,0);
 
             //i have come to create a new topic
 
@@ -114,6 +130,7 @@ class forum {
             $this->assign_editor_vars();
 
             $this->smarty->assign('topic', $topic_info);
+            $this->smarty->assign('poll', $options);
 
             $this->smarty->assign('sticky_checked', \CODOF\Forum\Forum::isSticky($topic_info['topic_status']));
             $this->smarty->assign('frontpage_checked', $topic_info['topic_status'] == \CODOF\Forum\Forum::STICKY);
