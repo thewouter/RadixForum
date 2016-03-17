@@ -118,6 +118,7 @@
 									 	{$voted=true}
 									{/if}
 								{/foreach}
+								
 						        {foreach from=$poll.4 item=option}
 						        	{if ($poll.2==0)}
 										<strong>{$option.1}</strong><span class="pull-right">0%</span>
@@ -125,23 +126,26 @@
 										<strong>{$option.1}</strong><span class="pull-right">{($option.2 / $poll.2) * 100}%</span>
 									{/if}
 									
-										  {if ($voted==false)}
-										  		<button type="button" class="codo_btn" onclick="vote({$option.0},'{$poll.6}')">Stem</button>
-										  		<input type="hidden" value="{$option.0}">
-										  {/if}
-									 <div class="progress">
-									 	{if ($poll.2 == 0)}
-											  <div class="progress-bar" role="progressbar" aria-valuenow="{($option.2 / $poll.2) * 100}" aria-valuemin="0" aria-valuemax="80" style="width:{($option.2 / $poll.2) * 100}%">
-											    <span class="sr-only">70% Complete</span>
-											    {if ($poll.5 == $option.0)}
-											    	*Hier heb je op gestemd
-											    {/if}
-											  </div>
-										{else}
-											<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="80" style="width:100%">
-											    <span class="sr-only">70% Complete</span>
-											  </div>
-										{/if}
+									{if ($voted==false)}
+										<button type="button" class="codo_btn" onclick="vote({$option.0},'{$poll.6}')">Stem</button>
+										<input type="hidden" value="{$option.0}">
+									{/if}
+									
+								 	<div class="progress">
+								 	
+								 	{if ($poll.2 != 0)}
+										  <div class="progress-bar" role="progressbar" aria-valuenow="{($option.2 / $poll.2) * 100}" aria-valuemin="0" aria-valuemax="80" style="width:{($option.2 / $poll.2) * 100}%">
+										    <span class="sr-only">70% Complete</span>
+										    {if ($poll.5 == $option.0)}
+										    	*Hier heb je op gestemd
+										    {/if}
+										  </div>
+									{else}
+										<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="80" style="width:100%">
+										    <span class="sr-only">70% Complete</span>
+										  </div>
+									{/if}
+									
 									</div>
 									  
 								{/foreach}
