@@ -50,12 +50,122 @@
 
         <div class="row">
 
-
-
-
             <div class="codo_posts col-md-9">
 
                 {"block_posts_before"|load_block}
+                
+                {if ($poll.0 != 0)}
+                <div class="codo_widget">
+                
+
+					<script type="text/javascript">
+						function vote(id1, name1){
+							CODOF.req.data = {
+	                            'option_id': id1,
+	                            'name': name1,
+	                            'remove': 'false'
+	                        };
+	
+	                        CODOF.hook.call('before_req_send');
+	
+	                        $.post(
+	                                codo_defs.url + 'Ajax/poll/vote',
+	                                CODOF.req.data,
+	                                function(json) {
+										location.reload(true);
+									}
+	                        );
+						}
+						
+						function deVote(id1, name1){
+							CODOF.req.data = {
+	                            'option_id': id1,
+	                            'name': name1,
+	                            'remove': 'true'
+	                        };
+	
+	                        CODOF.hook.call('before_req_send');
+	
+	                        $.post(
+	                                codo_defs.url + 'Ajax/poll/vote',
+	                                CODOF.req.data,
+	                                function(json) {
+										location.reload(true);
+									}
+	                        );
+						}
+					</script>
+                
+                
+                    <div class="codo_widget-header" id="codo_head_title">
+                        <div class="row">
+                            <div class="codo_topic_title">
+                                <b>{$poll.1}</b>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="codo_posts_container0" class="codo_widget-content">
+
+                        <article id="post-10" class="clearfix">
+
+						    
+						    <div class="codo_posts_post_content">
+						        <div class="span6">
+						        {assign var="voted" value=false}
+						        {foreach from=$poll.4 item=option}
+									{if ($poll.5 == $option.0)}
+									 	{$voted=true}
+									{/if}
+								{/foreach}
+						        {foreach from=$poll.4 item=option}
+						        	{if ($poll.2==0)}
+										<strong>{$option.1}</strong><span class="pull-right">0%</span>
+									{else}
+										<strong>{$option.1}</strong><span class="pull-right">{($option.2 / $poll.2) * 100}%</span>
+									{/if}
+									
+										  {if ($voted==false)}
+										  		<button type="button" class="codo_btn" onclick="vote({$option.0},'{$poll.6}')">Stem</button>
+										  		<input type="hidden" value="{$option.0}">
+										  {/if}
+									 <div class="progress">
+									 	{if ($poll.2 == 0)}
+											  <div class="progress-bar" role="progressbar" aria-valuenow="{($option.2 / $poll.2) * 100}" aria-valuemin="0" aria-valuemax="80" style="width:{($option.2 / $poll.2) * 100}%">
+											    <span class="sr-only">70% Complete</span>
+											    {if ($poll.5 == $option.0)}
+											    	*Hier heb je op gestemd
+											    {/if}
+											  </div>
+										{else}
+											<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="80" style="width:100%">
+											    <span class="sr-only">70% Complete</span>
+											  </div>
+										{/if}
+									</div>
+									  
+								{/foreach}
+								{if ($voted==true)}
+									<div>
+										<button type="button" class="codo_btn" onclick="deVote({$poll.5},'{$poll.6}')">Verwijder Stem</button>
+									</div>
+								{/if}
+						
+						
+						    </div>
+						
+						    <div class="codo_posts_post_foot clearfix">
+						    </div>
+						
+						</article>
+						<div class="codo_topic_separator"></div>
+
+
+
+
+                    </div>
+                </div>
+                {/if}
                 <div class="codo_widget">
                     <div class="codo_widget-header" id="codo_head_title">
                         <div class="row">

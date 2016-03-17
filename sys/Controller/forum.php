@@ -31,6 +31,7 @@ namespace Controller;
  */
 
 use CODOF\Access\Access;
+use CODOF\User\CurrentUser\CurrentUser;
 
 class forum {
 
@@ -66,19 +67,24 @@ class forum {
             $poll_id = $poll_info['poll_id'];
             $poll_name = $poll_info['question'];
             
-			$qry3 = "SELECT s.poll_option_id AS pollid FROM ".PREFIX."codo_poll_options s WHERE s.poll_id=".$poll_id;
-			$qry3 = "SELECT * FROM ".PREFIX."codo_poll_options";
-			$res3 = $this->db->query($qry3);
-			
-			$options = array($poll_id);
-			$temp = array();
-			while($option = $res3->fetch()){
-				array_push($temp, array($option['text'], $option['poll_option_id']));
-			}
-			array_push($options, $poll_name);
-			array_push($options, sizeof($temp));
-			array_push($options, $temp);
+            if (!is_null($poll_id)){
+            	$qry3 = "SELECT * FROM ".PREFIX."codo_poll_options s WHERE s.poll_id=".$poll_id;
+				$res3 = $this->db->query($qry3);
+				
+				$options = array($poll_id);
+				$temp = array();
+				while($option = $res3->fetch()){
+					array_push($temp, array($option['text'], $option['poll_option_id']));
+				}
+				array_push($options, $poll_name);
+				array_push($options, sizeof($temp));
+				array_push($options, $temp);
+            } else {
+            	$options=array(0,0);
+            }
             
+			
+			
             $tuid = $topic_info['uid'];
             $cid = $topic_info['cat_id'];
 
@@ -316,7 +322,41 @@ class forum {
     }
 
     public function topic($tid, $page) {
+    	$user = \CODOF\User\User::get();
+    	$qry = "SELECT poll_id, question FROM ".PREFIX."codo_poll WHERE topic_id=".$tid."";
+    	$res = $this->db->query($qry);
+    	$poll_info = $res->fetch();
 
+    	$poll = array();
+		if(!is_null($poll_info['poll_id'])){ // Poll exists
+    		$poll = array($poll_info['poll_id'], $poll_info['question']);
+	    	$qry2 = "SELECT * FROM ".PREFIX."codo_poll_options WHERE poll_id=".$poll_info['poll_id']."";
+	    	$res2 = $this->db->query($qry2);
+	    	$poll_options_info = array();
+	    	$votes = 0;
+	    	$voted = -1;
+	    	while ($temp = $res2->fetch()){
+	    		$voters = explode(',', $temp['voters']);
+	    		array_push($poll_options_info, array($temp['poll_option_id'], $temp['text'], (int)$temp['votes'], $voters));
+	    		$votes = $votes + $temp['votes'];
+	    		if(in_array($user->username, $voters)){
+	    			$voted = $temp['poll_option_id'];
+	    		}
+	    	}
+	    	array_push($poll, $votes);
+	    	array_push($poll, sizeof($poll_options_info));
+	    	array_push($poll, $poll_options_info);
+	    	array_push($poll, $voted);
+	    	array_push($poll, $user->username);
+	    	
+	    	
+	    	
+		} else { // No poll available
+			array_push($poll, 0);
+		}
+    	
+    	//var_dump($poll);
+    	
         $topic = new \CODOF\Forum\Topic($this->db);
         $post = new \CODOF\Forum\Post($this->db);
 
@@ -395,7 +435,12 @@ class forum {
             $num_pages = $posts_data['num_pages'];
             $posts = $posts_data['posts'];
             $posts_tpl = \CODOF\HB\Render::tpl('forum/topic', $posts_data);
+            
+            
+            
+
             $this->smarty->assign('posts', $posts_tpl);
+            $this->smarty->assign('poll', $poll);
             $this->smarty->assign('topic_info', $topic_info);
             $this->smarty->assign('title', htmlentities($topic_info['title'], ENT_QUOTES, "UTF-8"));
 
@@ -440,7 +485,7 @@ class forum {
             $tuid = $topic_info['uid'];
             $this->assign_admin_vars($tuid);
 
-            $this->css_files = array('topic', 'editor', 'jquery.textcomplete');
+            $this->css_files = array('topic', 'editor', 'jquery.textcomplete', 'temp');
             $arr = array(
                 array('topic/topic.js', array('type' => 'defer')),
                 array('modal.js', array('type' => 'defer')),

@@ -398,6 +398,7 @@ class codoforumInstallDatabase {
             $table->integer('poll_id');
             $table->string('text');
             $table->integer('votes')->default("0");
+            $table->string('voters');
         });
 
         /**
@@ -558,10 +559,10 @@ class codoforumInstallDatabase {
     public function fill() {
 
         $values = array(
-            array(3, 0, 'General Discussions', 'general-discussions', 'For anything and everything that doesnt fit in other categories.', 'bubbles.png', 1, 1, 0),
-            array(10, 0, 'News and Announcements', 'news-and-announcements', 'this is where all the latest news will be posted', 'bullhorn.png', 0, 0, 0),
-            array(11, 0, 'Support Forums', 'support-forums', 'Have any problem? Report it here and we will be glad to help.', 'support.png', 0, 0, 2),
-            array(12, 0, 'Let us know', 'let-us-know', 'We encourage new members to post a short description about themselves', 'envelope.png', 0, 0, 2),
+            array(3, 0, 'Opkomsten', 'opkomsten', 'For anything and everything that doesnt fit in other categories.', 'bubbles.png', 1, 1, 0),
+            array(10, 0, 'Kampen', 'kampen', 'this is where all the latest news will be posted', 'bullhorn.png', 0, 0, 0),
+            array(11, 0, 'Documentatie', 'documentatie', 'Have any problem? Report it here and we will be glad to help.', 'support.png', 0, 0, 2),
+            array(12, 0, 'PR', 'pr', 'We encourage new members to post a short description about themselves', 'envelope.png', 0, 0, 2),
             array(13, 0, 'Bug Reports', 'bug-reports', 'Found a bug? why not report it here?', 'bug.png', 0, 0, 2),
             array(14, 0, 'Feature Requests', 'feature-requests', 'You have a cool idea? post them here!', 'wand.png', 0, 0, 2)
         );

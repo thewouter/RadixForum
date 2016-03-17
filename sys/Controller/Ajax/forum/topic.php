@@ -66,8 +66,6 @@ class topic {
             $post->from = $from;
 
             $posts = $post->gen_posts_arr($res, $search);
-
-            //var_dump($topics);
         } else {
 
             $topic = new \CODOF\Forum\Topic($this->db);
@@ -112,6 +110,22 @@ class topic {
         } else {
             echo 'failure';
         }
+    }
+    
+    public function vote($id, $name, $remove){
+    	if($remove == 'false'){
+	    	$query = "SELECT voters FROM codo_poll_options WHERE poll_option_id=".$id;
+	    	$res = $this->db->query($query);
+	    	$option = $res->fetch();
+	    	$names = $option[0].','.$name;
+	    	$query = "UPDATE codo_poll_options SET votes=votes+1, voters='".$names."' WHERE poll_option_id=".$id;
+	    	$this->db->query($query);
+    	} else {
+    		$query = "UPDATE codo_poll_options SET votes=votes-1, voters=REPLACE(voters,',".$name."','') WHERE poll_option_id=".$id;
+    		$this->db->query($query);
+    	}
+	    	
+    	
     }
 
     public function reply() {
@@ -328,12 +342,12 @@ class topic {
 
 	            if (isset($_POST['poll'])) {
 	            	if ($_POST['poll'] == true){
+	            		$pollOptions=json_decode($_POST['options']);
 	            		$query = "INSERT INTO codo_poll (question, topic_id) VALUES ('".$_POST['question']."','".(string)$tid."')";
 	            		$this->db->query($query);
 	            		$pollID = $this->db->lastInsertId();
-	            		$pollOptions=json_decode($_POST['options']);
 	            		foreach ($pollOptions as $option){
-	            			$query = "INSERT INTO codo_poll_options (poll_id, text) VALUES ('".(string)$pollID."','".$option[0]."')";
+	            			$query = "INSERT INTO codo_poll_options (poll_id, text, voters) VALUES ('".(string)$pollID."','".$option[0]."','')";
 	            			$this->db->query($query);
 	            		}
 	            	}
@@ -469,7 +483,7 @@ class topic {
 	            		$this->db->query($query);
 	            		$pollID = $this->db->lastInsertId();
 	            		foreach ($pollOptions as $option){
-	            			$query = "INSERT INTO codo_poll_options (poll_id, text) VALUES ('".(string)$pollID."','".$option[0]."')";
+	            			$query = "INSERT INTO codo_poll_options (poll_id, text, voters) VALUES ('".(string)$pollID."','".$option[0]."','')";
 	            			$this->db->query($query);
 	            		}
             		} else {
@@ -477,7 +491,7 @@ class topic {
 	            			if ($option[1] == -1){
 	            				//New Option
 	            				var_dump("new Option");
-	            				$query = "INSERT INTO codo_poll_options ( poll_id, text) VALUES ('".$poll_id."','".$option[0]."')";
+	            				$query = "INSERT INTO codo_poll_options ( poll_id, text, voters) VALUES ('".$poll_id."','".$option[0]."','')";
 	            				$this->db->query($query);
 	            			} else {
 	            				// Edit option

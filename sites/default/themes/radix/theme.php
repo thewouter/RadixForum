@@ -15,7 +15,7 @@ $col->addJS('jquery-1.10.2.min.js', array('type' => 'defer'))
         ->addJS('hammer.min.js', array('type' => 'defer'));
 
 
-$global_less = array('mixins', 'bootstrap', 'general', 'search', 'jquery.mmenu','jquery.mmenu.dragopen');
+$global_less = array('temp', 'mixins', 'bootstrap', 'general', 'search', 'jquery.mmenu','jquery.mmenu.dragopen');
 
 if ($css_files == null) {
 

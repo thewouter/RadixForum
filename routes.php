@@ -215,6 +215,15 @@ dispatch_post('Ajax/topic/create', function() {
 });
 
 //safe
+dispatch_post('Ajax/poll/vote', function() {
+		$vote_id = $_POST['option_id'];
+		$vote_name = $_POST['name'];
+		$remove = $_POST['remove'];
+		$topic = new Controller\Ajax\forum\topic();
+		$topic->vote($vote_id, $vote_name, $remove);
+});
+
+//safe
 dispatch_post('Ajax/topic/edit', function() {
 
     if (Request::valid($_POST['token'])) {
@@ -418,6 +427,7 @@ dispatch_get('Ajax/topics/mark_read', function() {
         $tracker->mark_forum_as_read();
     }
 });
+
 
 dispatch_get('Ajax/topics/mark_read/:cid', function($cid) {
 
@@ -871,7 +881,7 @@ dispatch_get('/topic/:id/edit', function($tid) {
 
 dispatch_get('/topic/:tid/:tname/:page', function($tid, $tname, $page) {
 
-    if ($page == null) {
+	if ($page == null) {
 
         $page = 1;
     }
