@@ -15,7 +15,7 @@
 	            
 	            
 	            $today = new DateTime();
-	            $qry = 'SELECT topic_id, title, opkomst FROM codo_topics WHERE opkomst >= CURDATE()';
+	            $qry = 'SELECT topic_id, title, opkomst FROM codo_topics WHERE opkomst >= CURDATE() AND topic_status != 0';
 	            $res = $db->query($qry);
 	            $topics = $res->fetchAll();
 	            
