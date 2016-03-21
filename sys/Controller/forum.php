@@ -98,7 +98,8 @@ class forum {
                 "topic_status" => 0,
                 "cat_id" => 0,
                 "topic_id" => 0,
-            	"opkomst" => 0
+            	"opkomst" => 0,
+            	"logged_in" => 0
             );
             
             $options=array(0,0);
@@ -337,7 +338,7 @@ class forum {
 	    	$voted = -1;
 	    	while ($temp = $res2->fetch()){
 	    		$voters = explode(',', $temp['voters']);
-	    		array_push($poll_options_info, array($temp['poll_option_id'], $temp['text'], (int)$temp['votes'], $voters));
+	    		array_push($poll_options_info, array($temp['poll_option_id'], $temp['text'], (int)$temp['votes'], $voters, $temp['voters']));
 	    		$votes = $votes + $temp['votes'];
 	    		if(in_array($user->username, $voters)){
 	    			$voted = $temp['poll_option_id'];
@@ -348,6 +349,7 @@ class forum {
 	    	array_push($poll, $poll_options_info);
 	    	array_push($poll, $voted);
 	    	array_push($poll, $user->username);
+	    	array_push($poll, $user->loggedIn());
 	    	
 	    	
 	    	

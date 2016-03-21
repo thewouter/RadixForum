@@ -114,7 +114,7 @@
 						        <div class="span6">
 						        {assign var="voted" value=false}
 						        {foreach from=$poll.4 item=option}
-									{if ($poll.5 == $option.0)}
+									{if ($poll.5 == $option.0 && $poll.7)}
 									 	{$voted=true}
 									{/if}
 								{/foreach}
@@ -126,7 +126,7 @@
 										<strong>{$option.1}</strong><span class="pull-right">{($option.2 / $poll.2) * 100}%</span>
 									{/if}
 									
-									{if ($voted==false)}
+									{if ($voted==false && $poll.7)}
 										<button type="button" class="codo_btn" onclick="vote({$option.0},'{$poll.6}')">Stem</button>
 										<input type="hidden" value="{$option.0}">
 									{/if}
@@ -136,20 +136,21 @@
 								 	{if ($poll.2 != 0)}
 										  <div class="progress-bar" role="progressbar" aria-valuenow="{($option.2 / $poll.2) * 100}" aria-valuemin="0" aria-valuemax="80" style="width:{($option.2 / $poll.2) * 100}%">
 										    <span class="sr-only">70% Complete</span>
-										    {if ($poll.5 == $option.0)}
-										    	*Hier heb je op gestemd
+										    {if ($poll.5 == $option.0 && $poll.7)}
+										    	*Hier heb je op gestemd ({$option.4})
 										    {/if}
 										  </div>
 									{else}
 										<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="80" style="width:100%">
 										    <span class="sr-only">70% Complete</span>
+										    ({$option.4})
 										  </div>
 									{/if}
 									
 									</div>
 									  
 								{/foreach}
-								{if ($voted==true)}
+								{if ($voted==true && $poll.7)}
 									<div>
 										<button type="button" class="codo_btn" onclick="deVote({$poll.5},'{$poll.6}')">Verwijder Stem</button>
 									</div>
