@@ -60,7 +60,7 @@
 
 					<script type="text/javascript">
 						function vote(id1, name1){
-							$("#votebutton").attr("disabled", true);
+							$("button.votebutton").attr("disabled", true);
 							CODOF.req.data = {
 	                            'option_id': id1,
 	                            'name': name1,
@@ -128,7 +128,7 @@
 									{/if}
 									
 									{if ($voted==false && $poll.7)}
-										<button type="button" class="codo_btn" onclick="vote({$option.0},'{$poll.6}')" id="votebutton">Stem</button>
+										<button type="button" class="codo_btn votebutton" onclick="vote({$option.0},'{$poll.6}')" >Stem</button>
 										<input type="hidden" value="{$option.0}">
 									{/if}
 									
