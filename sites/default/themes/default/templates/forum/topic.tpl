@@ -139,13 +139,15 @@
 										    <span class="sr-only">70% Complete</span>
 										    {if ($poll.5 == $option.0 && $poll.7)}
 										    	*Hier heb je op gestemd ({$option.4})
+										    {else}
+										    	({$option.4})
 										    {/if}
 										  </div>
 									{else}
 										<div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="80" style="width:100%">
 										    <span class="sr-only">70% Complete</span>
 										    ({$option.4})
-										  </div>
+										</div>
 									{/if}
 									
 									</div>
